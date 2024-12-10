@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fleetman-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fleetman-mongodb
+  template:
+    metadata:
+      labels:
+        app: fleetman-mongodb
+    spec:
+      containers:
+      - name: fleetman-mongodb
+        image: mongo:3.6.23
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: mongodb-secret
+              key: password
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
+      volumes: 
+      - name: mongo-data
+        persistentVolumeClaim:
+          claimName: mongo-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-mongodb
+spec:
+  type: ClusterIP
+  selector:
+    app: fleetman-mongodb
+  ports:
+  - port: 21017
+    targetPort: 21017
+    protocol: TCP
+
