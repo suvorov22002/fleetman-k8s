@@ -69,7 +69,7 @@ Ensuite executer la commande `sudo sysctl --system` pour prendre en considérati
     ```
 * Installation de Docker - container runtime
     ```bash
-    sudo apt-instal docker.io
+    sudo apt install docker.io
     sudo mkdir /etc/containerd
     sudo sh -c "containerd config default > /etc/containerd/config.toml"
     #cgroup filter
