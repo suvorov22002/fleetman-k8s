@@ -101,7 +101,7 @@ Ensuite éxecuter les commandes suivantes pour créer le fichier de configuratio
 `kubeadm join 192.168.56.2:6443 --token y760wm.939eg87qay1f99mh --discovery-token-ca-cert-hash sha256:cc1f5e9379a047afb4353dfff280d669ff90eed6fb7e7435396864eb75644706`
 
 ## Déploiement des composants dans sur le master
-* Créer le configmap. `kubectl apply -f fleetman.yaml`
+* Créer le configmap. `kubectl apply -f fleetman-cm.yaml`
 * Créer le secret. `kubectl apply -f fleetman-mongo-secret.yaml`
 * Créer le persistent volume claim. `kubectl apply -f mongo-pvc.yaml`
 * Ensuite lancer le reste de déploiement:
