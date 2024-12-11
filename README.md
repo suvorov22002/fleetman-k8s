@@ -32,6 +32,7 @@ La suite est l'installation de notre cluster via kubeadm. Les étapes suivantes 
     sudo swapoff -a  
     sudo sed -i '/swap/s/^/#/' /etc/fstab 
     ```
+* Désactiver le pare feu: `systemctl disable --now ufw >/dev/null 2>&1`
 * configuration du hostname: cette étape est dejà effectué dans le Vagranfile. Le master a pour hostname _master01_ et les workers _worker01_ , _worker02_
 * mise à jour du fichiers hosts pour la résolution des hostnames. Exécuter la commande `sudo vim etc/hosts` pour éditer le fichier hosts. Ajouter les lignes suivantes à la fin du fichier.
 192.168.56.2 master01
@@ -39,7 +40,7 @@ La suite est l'installation de notre cluster via kubeadm. Les étapes suivantes 
 192.168.56.4 worker02
 * Configuration de IPV4 bridges.
     ```bash
-    cat <<EOF | sudo tee /etc/modules-load.d/k8s/conf
+    cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
     overlay
     br_netfilter
     EOF
@@ -64,7 +65,10 @@ Ensuite executer la commande `sudo sysctl --system` pour prendre en considérati
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
     sudo apt update
-    sudo apt install -y kubelet kubeadm kubectl
+    #list kubernetes version available
+    apt-cache madison kubelet kubeadm kubectl
+    #install appropriate version
+    sudo apt install -y kubelet=1.31.4-1.1 kubeadm=1.31.4-1.1 kubectl=1.31.4-1.1
     sudo apt-mark hold kubelet kubeadm kubectl
     ```
 * Installation de Docker - container runtime
@@ -73,7 +77,7 @@ Ensuite executer la commande `sudo sysctl --system` pour prendre en considérati
     sudo mkdir /etc/containerd
     sudo sh -c "containerd config default > /etc/containerd/config.toml"
     #cgroup filter
-    sudo sed -i 's/ SystemdCgroup = false/ SystemdCgroup = true' /etc/containerd/config.toml
+    sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
     sudo systemctl restart containerd.service
     sudo systemctl restart kubelet.service
     sudo systemctl enable kubelet.service
@@ -92,8 +96,9 @@ Ensuite éxecuter les commandes suivantes pour créer le fichier de configuratio
     ```
 * Configuration de calico network, pour une communication entre les differents pods dans les cluster. (Uniquement sur le master)
     ```bash
-    kubectl create -f https://raw.githubusercontent.com/projectcalico/v3.26.1/manifests/tigera-operator.yaml
-    curl https://raw.githubusercontent.com/projectcalico/v3.26.1/manifests/custom-resources.yaml -O
+    curl https://github.com/projectcalico/calico/blob/release-v3.26/manifests/tigera-operator.yaml -O
+    kubectl create -f tigera-operator.yaml
+    curl https://github.com/projectcalico/calico/blob/release-v3.26/manifests/custom-resources.yaml -O
     sed -i 's/cidr: 192\.168\.0\.0\/16/cidr: 10.244.0.0\/16/g' custom-resources.yaml
     kubectl create -f custom-resources.yaml
     ```
@@ -101,6 +106,8 @@ Ensuite éxecuter les commandes suivantes pour créer le fichier de configuratio
 `kubeadm join 192.168.56.2:6443 --token y760wm.939eg87qay1f99mh --discovery-token-ca-cert-hash sha256:cc1f5e9379a047afb4353dfff280d669ff90eed6fb7e7435396864eb75644706`
 
 ## Déploiement des composants dans sur le master
+copier les differents fichiers de manifest sur le master node. A partir de votre invite de commande windows executer: `scp fleetman-queue.yaml mongo-pvc.yaml fleetman-position-simulator.yaml fleetman-api-gateway.yaml fleetman-position-tracker.yaml fleetman-mongo.yaml fleetman-mongo-secret.yaml fleetman-web-app.yaml fleetman-cm.yaml vagrant@192.168.56.2:/home/vagrant/`
+* créer un namespace pour l'application nommée: kubectl create namespace _fleetman-001_. Pour cela éxécuter la commande: `kubectl create namespace fleetman-001`
 * Créer le configmap. `kubectl apply -f fleetman-cm.yaml`
 * Créer le secret. `kubectl apply -f fleetman-mongo-secret.yaml`
 * Créer le persistent volume claim. `kubectl apply -f mongo-pvc.yaml`

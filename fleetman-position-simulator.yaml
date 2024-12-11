@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fleetman-position-simulator
+  namespace: fleetman-001
   labels:
     app: fleetman-position-simulator
 spec:
@@ -17,9 +18,12 @@ spec:
       containers:
       - name: fleetman-position-simulator
         image: supinfo4kube/position-similator:1.0.1
-        envFrom:
-        - configMapRef:
-          name: fleetman-config
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: fleetman-config
+              key: SPRING_PROFILES_ACTIVE
         resources:
           limits:
             memory: "128Mi"
@@ -31,6 +35,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: fleetman-position-simulator
+  namespace: fleetman-001
 spec:
   type: ClusterIP
   selector:
@@ -39,3 +44,4 @@ spec:
   - port: 8080
     targetPort: 8080
     protocol: TCP
+    name: http

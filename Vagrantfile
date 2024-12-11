@@ -1,3 +1,5 @@
+# -*- mode: ruby -*-
+# vi:set ft=ruby sw=2 ts=2 sts=2:
 NUM_MASTER_NODE = 1
 NUM_WORKER_NODE = 2
 
@@ -6,7 +8,7 @@ MASTER_IP_START = 1
 NODE_IP_START = 2
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-22.04"
-  config.vm.box_version = "202407.23.0"
+  #config.vm.box_version = "202407.22.0"
   # Disable automatic box update checking.
   config.vm.box_check_update = false
 
