@@ -108,6 +108,14 @@ Ensuite éxecuter les commandes suivantes pour créer le fichier de configuratio
 
 ## Déploiement des composants dans sur le master
 copier les differents fichiers de manifest sur le master node. A partir de votre invite de commande windows executer: `scp fleetman-queue.yaml mongo-pvc.yaml fleetman-position-simulator.yaml fleetman-api-gateway.yaml fleetman-position-tracker.yaml fleetman-mongo.yaml fleetman-mongo-secret.yaml fleetman-web-app.yaml fleetman-cm.yaml storageclass.yaml vagrant@192.168.56.2:/home/vagrant/`
+* Les images des containers sont génerés pour une architecture amr64 et les machines sont sur architecture amd64 (uname -m). Pour 
+permettre les aux images de s'executer sur ces machines, exécuter les commandes suivantes sur les noeuds workers.
+    ```bash
+    sudo apt update
+    sudo apt install -y qemu qemu-user-static
+    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    docker run --rm --platform linux/arm64 busybox uname -m
+    ```
 * Se connecter au noeud worker01 et créer le repertoire /mnt/mongo/data: `sudo mkdir -p /mnt/mongo/data`. Ce dossier sera utiliser par le persistent volume pour le stockage.
 Se positionner sur la machine master pour la suite
 * Créer une ressource storageclass; `kubectl apply -f storageclass.yaml`
