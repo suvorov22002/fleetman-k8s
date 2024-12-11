@@ -103,7 +103,8 @@ Ensuite éxecuter les commandes suivantes pour créer le fichier de configuratio
     kubectl create -f custom-resources.yaml
     ```
 * Sur les noeuds worker uniquement, éxecuter la commande copier précedemment.
-`kubeadm join 192.168.56.2:6443 --token y760wm.939eg87qay1f99mh --discovery-token-ca-cert-hash sha256:cc1f5e9379a047afb4353dfff280d669ff90eed6fb7e7435396864eb75644706`
+`kubeadm join 192.168.56.2:6443 --token sd58mo.vy3gkwptr0aks6hf \
+        --discovery-token-ca-cert-hash sha256:737dee3e7c513507edc7080dabecdecc1f4cc7ccd8431a64f52b9b2a731d6115`
 
 ## Déploiement des composants dans sur le master
 copier les differents fichiers de manifest sur le master node. A partir de votre invite de commande windows executer: `scp fleetman-queue.yaml mongo-pvc.yaml fleetman-position-simulator.yaml fleetman-api-gateway.yaml fleetman-position-tracker.yaml fleetman-mongo.yaml fleetman-mongo-secret.yaml fleetman-web-app.yaml fleetman-cm.yaml vagrant@192.168.56.2:/home/vagrant/`
