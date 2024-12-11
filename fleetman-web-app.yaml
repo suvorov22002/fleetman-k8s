@@ -16,10 +16,10 @@ spec:
       containers:
       - name: fleetman-webapp
         image: supinfo4kube/web-app:1.0.0
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
+#        resources:
+#          limits:
+#            memory: "128Mi"
+#            cpu: "500m"
         ports:
         - containerPort: 80
 ---

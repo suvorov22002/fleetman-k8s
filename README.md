@@ -85,7 +85,7 @@ Ensuite executer la commande `sudo sysctl --system` pour prendre en considérati
 * Initialisation du cluster kubernetes: Cette étape ce passe uniquement sur le master. On télecharge d'abord les différents packages des composants du noeud master (apiserver, scheduler, control manager, etcd)
     ```bash
     sudo kubeadm config images pull
-    sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+    ubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=192.168.56.2
     ```
 A la fin de l'initialisation, lire les consignes afficher. Copier et noter la commande afficher _kubeadm join ...._, elle va servir pour joindre les noeuds worker au master.
 Ensuite éxecuter les commandes suivantes pour créer le fichier de configuration de kubernetes.
@@ -96,7 +96,7 @@ Ensuite éxecuter les commandes suivantes pour créer le fichier de configuratio
     ```
 * Configuration de calico network, pour une communication entre les differents pods dans les cluster. (Uniquement sur le master)
     ```bash
-    curl https://github.com/projectcalico/calico/blob/release-v3.26/manifests/tigera-operator.yaml -O
+    curl -O https://raw.githubusercontent.com/projectcalico/calico/release-v3.26/manifests/tigera-operator.yaml
     kubectl create -f tigera-operator.yaml
     curl https://github.com/projectcalico/calico/blob/release-v3.26/manifests/custom-resources.yaml -O
     sed -i 's/cidr: 192\.168\.0\.0\/16/cidr: 10.244.0.0\/16/g' custom-resources.yaml
@@ -107,19 +107,22 @@ Ensuite éxecuter les commandes suivantes pour créer le fichier de configuratio
         --discovery-token-ca-cert-hash sha256:737dee3e7c513507edc7080dabecdecc1f4cc7ccd8431a64f52b9b2a731d6115`
 
 ## Déploiement des composants dans sur le master
-copier les differents fichiers de manifest sur le master node. A partir de votre invite de commande windows executer: `scp fleetman-queue.yaml mongo-pvc.yaml fleetman-position-simulator.yaml fleetman-api-gateway.yaml fleetman-position-tracker.yaml fleetman-mongo.yaml fleetman-mongo-secret.yaml fleetman-web-app.yaml fleetman-cm.yaml vagrant@192.168.56.2:/home/vagrant/`
+copier les differents fichiers de manifest sur le master node. A partir de votre invite de commande windows executer: `scp fleetman-queue.yaml mongo-pvc.yaml fleetman-position-simulator.yaml fleetman-api-gateway.yaml fleetman-position-tracker.yaml fleetman-mongo.yaml fleetman-mongo-secret.yaml fleetman-web-app.yaml fleetman-cm.yaml storageclass.yaml vagrant@192.168.56.2:/home/vagrant/`
+* Se connecter au noeud worker01 et créer le repertoire /mnt/mongo/data: `sudo mkdir -p /mnt/mongo/data`. Ce dossier sera utiliser par le persistent volume pour le stockage.
+Se positionner sur la machine master pour la suite
+* Créer une ressource storageclass; `kubectl apply -f storageclass.yaml`
 * créer un namespace pour l'application nommée: kubectl create namespace _fleetman-001_. Pour cela éxécuter la commande: `kubectl create namespace fleetman-001`
 * Créer le configmap. `kubectl apply -f fleetman-cm.yaml`
 * Créer le secret. `kubectl apply -f fleetman-mongo-secret.yaml`
+* Créer le persistent volume. `kubectl apply -f mongo-pv.yaml`
 * Créer le persistent volume claim. `kubectl apply -f mongo-pvc.yaml`
 * Ensuite lancer le reste de déploiement:
     ```bash
-    kubectl apply -f fleetman-queue.yaml
-    kubectl apply -f fleetman-api-gateway.yaml
     kubectl apply -f fleetman-mongo.yaml
+    kubectl apply -f fleetman-api-gateway.yaml
+    kubectl apply -f fleetman-queue.yaml
     kubectl apply -f fleetman-position-simulator.yaml
     kubectl apply -f fleetman-position-tracker.yaml
     kubectl apply -f fleetman-web-app.yaml
     ```
-
 

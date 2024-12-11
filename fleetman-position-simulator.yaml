@@ -24,10 +24,10 @@ spec:
             configMapKeyRef:
               name: fleetman-config
               key: SPRING_PROFILES_ACTIVE
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
+#        resources:
+#          limits:
+#            memory: "128Mi"
+#            cpu: "500m"
         ports:
         - containerPort: 8080
 ---

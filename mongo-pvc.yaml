@@ -6,7 +6,8 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 1Gi
+      storage: 500Mi
   #volumeMode: Filesystem
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce

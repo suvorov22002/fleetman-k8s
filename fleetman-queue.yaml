@@ -16,10 +16,10 @@ spec:
       containers:
       - name: fleetman-queue
         image: supinfo4kube/queue:1.0.1
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
+#        resources:
+#          limits:
+#            memory: "128Mi"
+#            cpu: "500m"
         ports:
         - containerPort: 8161
         - containerPort: 61616

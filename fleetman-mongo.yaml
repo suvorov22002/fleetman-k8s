@@ -27,10 +27,10 @@ spec:
             secretKeyRef:
               name: mongodb-secret
               key: password
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
+#        resources:
+#          limits:
+#            memory: "128Mi"
+#            cpu: "500m"
         ports:
         - containerPort: 27017
         volumeMounts:
