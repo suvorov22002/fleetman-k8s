@@ -19,7 +19,7 @@ Elle sera déployé dans un cluster kubernetes, composé d'un node control panel
 * Vagrant (https://developer.hashicorp.com/vagrant/install)
 
 ## Démarrage
-Pour commencer nous allons mettre en place notre cluster. Il sera installé sur Unbuntu-22.04 et comportera un noeud master et deux noeuds workers.
+Pour commencer nous allons mettre en place notre cluster (kubernetes v1.31). Il sera installé sur Unbuntu-22.04 et comportera un noeud master et deux noeuds workers.
 
 Après avoir installé virtualBox et Vagrant sur notre poste, suivre les étapes suivantes:
 
